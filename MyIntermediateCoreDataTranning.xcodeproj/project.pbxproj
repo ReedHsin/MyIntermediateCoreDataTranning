@@ -12,6 +12,7 @@
 		C00FDE932047AC6200DF3CDD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C00FDE922047AC6200DF3CDD /* Assets.xcassets */; };
 		C00FDE962047AC6200DF3CDD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C00FDE942047AC6200DF3CDD /* LaunchScreen.storyboard */; };
 		C00FDEA02047AED900DF3CDD /* CompaniesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00FDE9F2047AED900DF3CDD /* CompaniesController.swift */; };
+		C00FDEA220486EBA00DF3CDD /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00FDEA120486EBA00DF3CDD /* Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		C00FDE952047AC6200DF3CDD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C00FDE972047AC6200DF3CDD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C00FDE9F2047AED900DF3CDD /* CompaniesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompaniesController.swift; sourceTree = "<group>"; };
+		C00FDEA120486EBA00DF3CDD /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 			children = (
 				C00FDE8B2047AC6200DF3CDD /* AppDelegate.swift */,
 				C00FDE9F2047AED900DF3CDD /* CompaniesController.swift */,
+				C00FDEA120486EBA00DF3CDD /* Extension.swift */,
 				C00FDE8F2047AC6200DF3CDD /* Main.storyboard */,
 				C00FDE922047AC6200DF3CDD /* Assets.xcassets */,
 				C00FDE942047AC6200DF3CDD /* LaunchScreen.storyboard */,
@@ -136,6 +139,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C00FDEA220486EBA00DF3CDD /* Extension.swift in Sources */,
 				C00FDE8C2047AC6200DF3CDD /* AppDelegate.swift in Sources */,
 				C00FDEA02047AED900DF3CDD /* CompaniesController.swift in Sources */,
 			);
