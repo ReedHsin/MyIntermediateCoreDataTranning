@@ -10,10 +10,16 @@ import UIKit
 
 class CompaniesController: UITableViewController{
 
+    var companies = [
+        Company(name: "Apple", founded: Date()),
+        Company(name: "Google", founded: Date()),
+        Company(name: "Twitter", founded: Date())
+    ]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        setupNavigationBarStyle()
+        setupCompaniesNaviStyle()
         setupTableViewStyle()
         registerCell()
     }
@@ -25,12 +31,12 @@ class CompaniesController: UITableViewController{
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 8
+        return companies.count
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = UIView()
-        headerView.backgroundColor = UIColor(white: 1.0, alpha: 0.3)
+        headerView.backgroundColor = UIColor.lightBlue
         let textLabel = UILabel()
         textLabel.text = "Company"
         textLabel.textColor = UIColor(white: 1.0, alpha: 0.6)
@@ -49,30 +55,25 @@ class CompaniesController: UITableViewController{
     //Mark: TableView Delegate
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CompanyCell", for: indexPath)
-        let tealColor = UIColor.color(red: 48, green: 164, blue: 184)
-        cell.backgroundColor = tealColor
-        let text = "Some companies"
-        cell.textLabel?.text = text
+        cell.backgroundColor = UIColor.tealColor
+        let company = companies[indexPath.item]
+        cell.textLabel?.text = company.name
         cell.textLabel?.textColor = UIColor.white
         cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         return cell
     }
     
     
+    
+    
+    
+    
+    
 }
 
 extension CompaniesController{
-    fileprivate func setupNavigationBarStyle(){
-        navigationController?.navigationBar.isTranslucent = false
-        //設定NavigationBar的title
+    fileprivate func setupCompaniesNaviStyle(){
         navigationItem.title = "Companies"
-        //讓title字變大，要加這行下面設定largeTitleTextAttributes的code才有效
-        navigationController?.navigationBar.prefersLargeTitles = true
-        //讓title變白色且字又變大
-        navigationController?.navigationBar.largeTitleTextAttributes = [
-            NSAttributedStringKey.foregroundColor : UIColor.white
-        ]
-        
         //因為TableView在滑動的時候，預設的title顏色為black，但我們希望是white
         navigationController?.navigationBar.titleTextAttributes = [
             NSAttributedStringKey.foregroundColor : UIColor.white
@@ -87,11 +88,14 @@ extension CompaniesController{
     }
     
     @objc func handleAddCompany(){
-        print("Adding company...")
+        let createCompanyController = CreateCompanyController()
+        createCompanyController.delegate = self
+        let naviController = CustomNavigationController(rootViewController: createCompanyController)
+        present(naviController, animated: true, completion: nil)
     }
     
     fileprivate func setupTableViewStyle(){
-        tableView.backgroundColor = UIColor.color(red: 9, green: 45, blue: 64)
+        tableView.backgroundColor = UIColor.darkBlueColor
 //        tableView.separatorStyle = .none
         tableView.separatorColor = .white
         //讓沒有row的地方，直接就是底色
@@ -105,5 +109,15 @@ extension CompaniesController{
 }
 
 
+extension CompaniesController: CreateCompanyControllerDelegate{
+    func didAddCompany(company: Company) {
+        companies.append(company)
+        //insert a new row in tableview
+        let newIndexpath = IndexPath(row: companies.count-1, section: 0)
+        tableView.insertRows(at: [newIndexpath], with: .bottom)
+    }
+    
+    
+}
 
 

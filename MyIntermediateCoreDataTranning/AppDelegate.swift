@@ -25,7 +25,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
+        //統一所有navigationBar的appearance
+        //一定要放在最上面
+        UINavigationBar.appearance().tintColor = .white
+        UINavigationBar.appearance().isTranslucent = false
+        UINavigationBar.appearance().barTintColor = UIColor.lightRed
+        UINavigationBar.appearance().prefersLargeTitles = true
+        UINavigationBar.appearance().largeTitleTextAttributes = [
+            NSAttributedStringKey.foregroundColor : UIColor.white
+        ]
         window = UIWindow()
         window?.makeKeyAndVisible()
         
@@ -33,7 +41,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let naviController = CustomNavigationController(rootViewController: companiesComtroller)
         //可以set mainUI
         window?.rootViewController = naviController
-        
         return true
     }
 
