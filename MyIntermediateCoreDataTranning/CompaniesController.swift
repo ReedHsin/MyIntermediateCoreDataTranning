@@ -10,6 +10,7 @@ import UIKit
 import CoreData
 
 protocol CompaniesControllerProtocol {
+    var companies: [CompanyModel] {get set}
     var tableView: UITableView {get}
     func setupCompaniesNaviStyle()
     func setupTableView()
@@ -27,11 +28,7 @@ class CompaniesController: UIViewController{
        let tbv = UITableView()
         return tbv
     }()
-    var companies = [
-        Company(name: "Apple", founded: Date()),
-        Company(name: "Google", founded: Date()),
-        Company(name: "Twitter", founded: Date())
-    ]
+    var companies = [CompanyModel]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,8 +46,6 @@ class CompaniesController: UIViewController{
 
 //MARK: CompaniesControllerProtocol
 extension CompaniesController: CompaniesControllerProtocol{
-   
-    
     internal func setupCompaniesNaviStyle(){
         navigationItem.title = "Companies"
         //因為TableView在滑動的時候，預設的title顏色為black，但我們希望是white
@@ -95,43 +90,39 @@ extension CompaniesController: CompaniesControllerProtocol{
     
     internal func fetchCompaniesFromCoreData() {
         //attempt my core data fetch somehow
-        let persistantContainer = NSPersistentContainer(name: "MyIntermediateCoreDatatranningModel")
-        persistantContainer.loadPersistentStores { (description, err) in
-            if let err = err{
-                fatalError("Loading of store failure: \(err)")
-            }
-            print("Loading of stor successful!")
-        }
-        
-        let context = persistantContainer.viewContext
+//        let persistantContainer = NSPersistentContainer(name: "MyIntermediateCoreDatatranningModel")
+//        persistantContainer.loadPersistentStores { (description, err) in
+//            if let err = err{
+//                fatalError("Loading of store failure: \(err)")
+//            }
+//            print("Loading of stor successful!")
+//        }
+        //直接用CoreDataMeneger Singletern
+        let context = CoreDataManager.shared.persistantContainer.viewContext
         //去抓取core data中存的資料
         //這邊xcode會自動幫我們加<NSFetchRequestResult>，但是我們需要自行把它改成我們的entity name(這邊是CompanyModel)
         let fetchRequest = NSFetchRequest<CompanyModel>(entityName: "CompanyModel")
         //用do-catch來實做context.fetch
         do{
             let companies = try context.fetch(fetchRequest)
-            companies.forEach({ (company) in
-                print(company.name)
-            })
-            
+            self.companies = companies
+            tableView.reloadData()
         }catch let err {
             print("Fetching of companies failure: ", err.localizedDescription)
             return
         }
-        
-        
-        
     }
-    
-    
-    
 }
 
 
 
 //MARK: AddCompanyProtocol
+//這邊一開始會發現雖然會出現一個新的row，但這個row的context會是nil
+//原因在CreateCompanyController的context，會在handleAddItem function結束後，context也會移出記憶體
+//所以在這邊試圖存取時，自然會找不到
+//但可以用創造一個Singleton CoreDataManager去解
 extension CompaniesController: AddCompanyProtocol{
-    func didAddCompany(company: Company) {
+    func didAddCompany(company: CompanyModel) {
         companies.append(company)
         //insert a new row in tableview
         let newIndexpath = IndexPath(row: companies.count-1, section: 0)
@@ -178,6 +169,20 @@ extension CompaniesController: UITableViewDelegate, UITableViewDataSource{
         cell.textLabel?.textColor = UIColor.white
         cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (_, indexPath) in
+            let company = self.companies[indexPath.row]
+            
+            print(company.name)
+        }
+        let editAction = UITableViewRowAction(style: .normal, title: "Edit", handler: { (_, indexPath) in
+            let company = self.companies[indexPath.row]
+            
+            print(company.name)
+        })
+        return [deleteAction, editAction]
     }
 }
 

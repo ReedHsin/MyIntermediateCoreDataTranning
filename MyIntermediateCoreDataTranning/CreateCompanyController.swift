@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 protocol AddCompanyProtocol {
-    func didAddCompany(company: Company)
+    func didAddCompany(company: CompanyModel)
 }
 
 protocol CreateCompanyControllerPrototcol {
@@ -52,36 +52,41 @@ extension CreateCompanyController: CreateCompanyControllerPrototcol{
     }
     
     @objc func handleSaveItem(){
-        dismiss(animated: true){
-            let company = Company(name: self.createCompanyView.fetchNameTextFieldText(), founded: Date())
-            self.delegate?.didAddCompany(company: company)
-            
-            //1.initialization of our Core Data stack
-            //1.1:需與我們剛創的.xcdatamodeld的檔名相同
-            let persistantContainer = NSPersistentContainer(name: "MyIntermediateCoreDatatranningModel")
-            //1.2:去loading persistantStore
-            persistantContainer.loadPersistentStores { (storeDescription, err) in
-                if let err = err{
-                    //若不對，在app runtime期間，app就會crash
-                    fatalError("Loading of store failure: \(err)")
-                }
-                print("Successfully load store!!")
-            }
-            //1.2:去抓取viewContext
-            let context = persistantContainer.viewContext
-            //1.3:去抓取我們新增在core data的entity
-            let companyEntity = NSEntityDescription.insertNewObject(forEntityName: "CompanyModel", into: context)
-            //1.4:針對entity的欄位去新增資料(目前我們的company entity只有name欄位)
-            companyEntity.setValue(company.name, forKey: "name")
-            //perform the save(做完這步，此時你的company model已經被建立在core data中了)
-            //記得要用do-catch來實作context.save
-            do{
-                try context.save()
-            }catch let saveErr{
-                print("Failed to save: ", saveErr.localizedDescription)
-            }
-            //接下來，到CompaniesController中的viewDidLoad，在程式一開始執行時，去檢查core data中有沒有存資料
+        
+        //1.initialization of our Core Data stack
+        //1.1:需與我們剛創的.xcdatamodeld的檔名相同
+//        let persistantContainer = NSPersistentContainer(name: "MyIntermediateCoreDatatranningModel")
+        //1.2:去loading persistantStore
+//        persistantContainer.loadPersistentStores { (storeDescription, err) in
+//            if let err = err{
+//                //若不對，在app runtime期間，app就會crash
+//                fatalError("Loading of store failure: \(err)")
+//            }
+//            print("Successfully load store!!")
+//        }
+        //1.2:去抓取viewContext
+//        let context = persistantContainer.viewContext
+        //利用singleTern去解的話，context就會一直活著
+        let context =         CoreDataManager.shared.persistantContainer.viewContext
+
+        //1.3:去抓取我們新增在core data的entity
+        let companyModel = NSEntityDescription.insertNewObject(forEntityName: "CompanyModel", into: context)
+        //1.4:針對entity的欄位去新增資料(目前我們的company entity只有name欄位)
+        let companyName = createCompanyView.fetchNameTextFieldText()
+        companyModel.setValue(companyName, forKey: "name")
+        //perform the save(做完這步，此時你的company model已經被建立在core data中了)
+        //記得要用do-catch來實作context.save
+        do{
+            try context.save()
+            //success
+            dismiss(animated: true, completion: {
+                self.delegate?.didAddCompany(company: companyModel as! CompanyModel)
+            })
+        }catch let saveErr{
+            print("Failed to save: ", saveErr.localizedDescription)
         }
+        //接下來，到CompaniesController中的viewDidLoad，在程式一開始執行時，去檢查core data中有沒有存資料
+        
         
     }
     
