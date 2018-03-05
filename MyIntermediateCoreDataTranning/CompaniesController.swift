@@ -173,9 +173,22 @@ extension CompaniesController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (_, indexPath) in
+            //remove the company from coreData
+            let context = CoreDataManager.shared.persistantContainer.viewContext
             let company = self.companies[indexPath.row]
+            context.delete(company)//最後要讓這個delete save到persistant store
+            do{
+                 try context.save()
+            }catch let err {
+                print("Failed to delete company from CoreData: \(err.localizedDescription)")
+            }
+           
+            //remove the company from tableView
+            //要先把這個row從companies中移除，在做self.tableView.deleteRows。
+            //因為在執行self.tableView.deleteRows後，會觸發numberOfRowsInSection function，如此一來company個數才會一置，否則app會crash
+            self.companies.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .fade)
             
-            print(company.name)
         }
         let editAction = UITableViewRowAction(style: .normal, title: "Edit", handler: { (_, indexPath) in
             let company = self.companies[indexPath.row]
