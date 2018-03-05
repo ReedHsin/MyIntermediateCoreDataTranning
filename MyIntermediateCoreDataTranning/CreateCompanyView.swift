@@ -7,16 +7,29 @@
 //
 
 import UIKit
+protocol CreateCompanyViewDelegate {
+    var profileImageView: UIImageView {get set}
+    var selectePhotoButton: UIButton  {get set}
+    var nameTextField: UITextField {get set}
+    var foundedLabel: UILabel {get set}
+    var presentDatePickerLabel: UILabel {get set}
+    var datePicker: UIDatePicker {get set}
+    func setupViews()
+    func fetchNameTextFieldText()-> String
+}
 
-class CreateCompanyView: UIView {
+
+
+class CreateCompanyView: UIView, CreateCompanyViewDelegate {
     
-    fileprivate let profileImageView: UIImageView = {
+    var delegate: CreateCompanyViewDelegate?
+    internal var profileImageView: UIImageView = {
        let imgView = UIImageView()
         imgView.image = UIImage(named: "select_photo_empty")
         return imgView
     }()
-    
-    fileprivate let selectePhotoButton: UIButton = {
+
+    internal var selectePhotoButton: UIButton = {
        let btn = UIButton(type: .system)
         btn.setTitle("Select Photos", for: .normal)
         btn.setTitleColor(UIColor.black, for: .normal)
@@ -25,8 +38,8 @@ class CreateCompanyView: UIView {
         btn.layer.cornerRadius = 5.0
         return btn
     }()
-    
-    fileprivate let nameTextField: UITextField = {
+
+    internal var nameTextField: UITextField = {
        let textField = UITextField()
         textField.placeholder = "Type ur name here..."
         textField.leftViewMode = UITextFieldViewMode.always
@@ -36,26 +49,26 @@ class CreateCompanyView: UIView {
         textField.leftView = label
         return textField
     }()
-    
-    fileprivate let foundedLabel: UILabel = {
+
+    internal var foundedLabel: UILabel = {
        let label = UILabel()
         label.text = "Founded"
         return label
     }()
-    
-    fileprivate let presentDatePickerLabel: UILabel = {
+
+    internal var presentDatePickerLabel: UILabel = {
        let label = UILabel()
         label.textAlignment = .left
         label.text = "2018/3/2"
         return label
     }()
-    
-    fileprivate let datePicker: UIDatePicker = {
+
+    internal var datePicker: UIDatePicker = {
        let picker = UIDatePicker()
         return picker
     }()
     
-    fileprivate func setupViews(){
+    internal func setupViews(){
         addSubview(profileImageView)
         addSubview(selectePhotoButton)
         addSubview(nameTextField)
@@ -77,13 +90,14 @@ class CreateCompanyView: UIView {
         datePicker.anchor(top: presentDatePickerLabel.bottomAnchor, bottom: bottomAnchor, left: leftAnchor, right: rightAnchor, topPadding: 10, bottomPadding: 0, leftPadding: 0, rightPadding: 0, width: 0, height: 0)
     }
     
-    func fetchNameTextFieldText() -> String{
+    public func fetchNameTextFieldText() -> String{
         guard let name = nameTextField.text else {return ""}
         return name
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        delegate = self
         backgroundColor = UIColor.lightBlue
         setupViews()
     }
@@ -93,3 +107,9 @@ class CreateCompanyView: UIView {
     }
     
 }
+
+
+
+
+
+
