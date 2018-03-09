@@ -8,8 +8,9 @@
 
 import UIKit
 import CoreData
-protocol AddCompanyProtocol {
+protocol AddAndEditCompanyDelegate {
     func didAddCompany(company: CompanyModel)
+    func didEditCompany(company: CompanyModel)
 }
 
 protocol CreateCompanyControllerPrototcol {
@@ -20,12 +21,17 @@ protocol CreateCompanyControllerPrototcol {
 
 class CreateCompanyController: UIViewController {
     let createCompanyView = CreateCompanyView()
-    var delegate: AddCompanyProtocol?
+    var delegate: AddAndEditCompanyDelegate?
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.darkBlueColor
         setupCreateCompanyNaviBar()
         setupViews()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationItem.title = createCompanyView.company == nil ? "Create Company" : "Edit Company"
     }
 }
 
@@ -35,40 +41,44 @@ class CreateCompanyController: UIViewController {
 
 
 
-
-
-
-
 extension CreateCompanyController: CreateCompanyControllerPrototcol{
+    
+    
     internal func setupCreateCompanyNaviBar(){
-        navigationItem.title = "Create Company"
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(handleCancelItem))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(handleSaveItem))
     }
     
     @objc func handleCancelItem(){
-        print("Tap cancel button...")
         dismiss(animated: true, completion: nil)
     }
     
     @objc func handleSaveItem(){
-        
+        let company = createCompanyView.company
+        if company == nil{
+            createNewCompanyIntoCoreData()
+        }else {
+            editCompanyInCoreData()
+        }
+    }
+    
+    fileprivate func createNewCompanyIntoCoreData(){
         //1.initialization of our Core Data stack
         //1.1:需與我們剛創的.xcdatamodeld的檔名相同
-//        let persistantContainer = NSPersistentContainer(name: "MyIntermediateCoreDatatranningModel")
+        //        let persistantContainer = NSPersistentContainer(name: "MyIntermediateCoreDatatranningModel")
         //1.2:去loading persistantStore
-//        persistantContainer.loadPersistentStores { (storeDescription, err) in
-//            if let err = err{
-//                //若不對，在app runtime期間，app就會crash
-//                fatalError("Loading of store failure: \(err)")
-//            }
-//            print("Successfully load store!!")
-//        }
+        //        persistantContainer.loadPersistentStores { (storeDescription, err) in
+        //            if let err = err{
+        //                //若不對，在app runtime期間，app就會crash
+        //                fatalError("Loading of store failure: \(err)")
+        //            }
+        //            print("Successfully load store!!")
+        //        }
         //1.2:去抓取viewContext
-//        let context = persistantContainer.viewContext
+        //        let context = persistantContainer.viewContext
         //利用singleTern去解的話，context就會一直活著
         let context =         CoreDataManager.shared.persistantContainer.viewContext
-
+        
         //1.3:去抓取我們新增在core data的entity
         let companyModel = NSEntityDescription.insertNewObject(forEntityName: "CompanyModel", into: context)
         //1.4:針對entity的欄位去新增資料(目前我們的company entity只有name欄位)
@@ -76,19 +86,32 @@ extension CreateCompanyController: CreateCompanyControllerPrototcol{
         companyModel.setValue(companyName, forKey: "name")
         //perform the save(做完這步，此時你的company model已經被建立在core data中了)
         //記得要用do-catch來實作context.save
+        //接下來，到CompaniesController中的viewDidLoad，在程式一開始執行時，去檢查core data中有沒有存資料
         do{
             try context.save()
             //success
-            dismiss(animated: true, completion: {
+            dismiss(animated: true){
                 self.delegate?.didAddCompany(company: companyModel as! CompanyModel)
-            })
+            }
         }catch let saveErr{
             print("Failed to save: ", saveErr.localizedDescription)
         }
-        //接下來，到CompaniesController中的viewDidLoad，在程式一開始執行時，去檢查core data中有沒有存資料
-        
-        
     }
+    
+    fileprivate func editCompanyInCoreData(){
+        let context = CoreDataManager.shared.persistantContainer.viewContext
+        guard let company = createCompanyView.company else {return}
+        company.name = createCompanyView.fetchNameTextFieldText()
+        do{
+            try context.save()
+            dismiss(animated: true){
+                self.delegate?.didEditCompany(company: company)
+            }
+        }catch let saveErr{
+            print("Failed to edit: ", saveErr)
+        }
+    }
+    
     
     internal func setupViews(){
         view.addSubview(createCompanyView)

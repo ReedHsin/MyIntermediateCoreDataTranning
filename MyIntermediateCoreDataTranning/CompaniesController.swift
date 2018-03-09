@@ -121,7 +121,15 @@ extension CompaniesController: CompaniesControllerProtocol{
 //原因在CreateCompanyController的context，會在handleAddItem function結束後，context也會移出記憶體
 //所以在這邊試圖存取時，自然會找不到
 //但可以用創造一個Singleton CoreDataManager去解
-extension CompaniesController: AddCompanyProtocol{
+extension CompaniesController: AddAndEditCompanyDelegate{
+    func didEditCompany(company: CompanyModel) {
+        guard let row = companies.index(of: company) else {
+            return
+        }
+        let indexPath = IndexPath(row: row, section: 0)//可以找到company的indexPath
+        tableView.reloadRows(at: [indexPath], with: .middle)
+    }
+    
     func didAddCompany(company: CompanyModel) {
         companies.append(company)
         //insert a new row in tableview
@@ -172,30 +180,38 @@ extension CompaniesController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (_, indexPath) in
-            //remove the company from coreData
-            let context = CoreDataManager.shared.persistantContainer.viewContext
-            let company = self.companies[indexPath.row]
-            context.delete(company)//最後要讓這個delete save到persistant store
-            do{
-                 try context.save()
-            }catch let err {
-                print("Failed to delete company from CoreData: \(err.localizedDescription)")
-            }
-           
-            //remove the company from tableView
-            //要先把這個row從companies中移除，在做self.tableView.deleteRows。
-            //因為在執行self.tableView.deleteRows後，會觸發numberOfRowsInSection function，如此一來company個數才會一置，否則app會crash
-            self.companies.remove(at: indexPath.row)
-            self.tableView.deleteRows(at: [indexPath], with: .fade)
-            
-        }
-        let editAction = UITableViewRowAction(style: .normal, title: "Edit", handler: { (_, indexPath) in
-            let company = self.companies[indexPath.row]
-            
-            print(company.name)
-        })
+        let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete", handler: deleteHandlerFunction)
+        let editAction = UITableViewRowAction(style: .normal, title: "Edit", handler: editHandlerFunction)
+        deleteAction.backgroundColor = UIColor.lightRed
+        editAction.backgroundColor = UIColor.darkBlueColor
         return [deleteAction, editAction]
     }
+    
+    fileprivate func deleteHandlerFunction(_: UITableViewRowAction, indexPath: IndexPath){
+        //remove the company from coreData
+        let context = CoreDataManager.shared.persistantContainer.viewContext
+        let company = self.companies[indexPath.row]
+        context.delete(company)//最後要讓這個delete save到persistant store
+        do{
+            try context.save()
+        }catch let err {
+            print("Failed to delete company from CoreData: \(err.localizedDescription)")
+        }
+        
+        //remove the company from tableView
+        //要先把這個row從companies中移除，在做self.tableView.deleteRows。
+        //因為在執行self.tableView.deleteRows後，會觸發numberOfRowsInSection function，如此一來company個數才會一置，否則app會crash
+        self.companies.remove(at: indexPath.row)
+        self.tableView.deleteRows(at: [indexPath], with: .fade)
+    }
+    
+    fileprivate func editHandlerFunction(_: UITableViewRowAction, indexPath: IndexPath){
+        let editController = CreateCompanyController()
+        editController.createCompanyView.company = companies[indexPath.row]
+        editController.delegate = self
+        let naviController = UINavigationController(rootViewController: editController)
+        present(naviController, animated: true, completion: nil)
+    }
+    
 }
 

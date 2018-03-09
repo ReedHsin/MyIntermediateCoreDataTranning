@@ -8,6 +8,7 @@
 
 import UIKit
 protocol CreateCompanyViewDelegate {
+    var company: CompanyModel? {get set}
     var profileImageView: UIImageView {get set}
     var selectePhotoButton: UIButton  {get set}
     var nameTextField: UITextField {get set}
@@ -21,8 +22,15 @@ protocol CreateCompanyViewDelegate {
 
 
 class CreateCompanyView: UIView, CreateCompanyViewDelegate {
+    internal var delegate: CreateCompanyViewDelegate?
+    public var company: CompanyModel? {
+        didSet{
+            nameTextField.text = company?.name
+        }
+    }
     
-    var delegate: CreateCompanyViewDelegate?
+    
+    
     internal var profileImageView: UIImageView = {
        let imgView = UIImageView()
         imgView.image = UIImage(named: "select_photo_empty")
@@ -95,6 +103,8 @@ class CreateCompanyView: UIView, CreateCompanyViewDelegate {
         return name
     }
     
+    
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         delegate = self
@@ -105,6 +115,8 @@ class CreateCompanyView: UIView, CreateCompanyViewDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    
     
 }
 
