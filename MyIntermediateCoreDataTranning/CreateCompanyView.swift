@@ -7,45 +7,64 @@
 //
 
 import UIKit
-protocol CreateCompanyViewDelegate {
+protocol CreateCompanyViewImageViewDelegate {
+    func presentImgPicker()
+}
+
+
+
+protocol CreateCompanyViewProtocol {
     var company: CompanyModel? {get set}
+    var profileImg: UIImage? {get set}
     var profileImageView: UIImageView {get set}
-    var selectePhotoButton: UIButton  {get set}
     var nameTextField: UITextField {get set}
     var foundedLabel: UILabel {get set}
     var presentDatePickerLabel: UILabel {get set}
     var datePicker: UIDatePicker {get set}
     func setupViews()
     func fetchNameTextFieldText()-> String
+    func fetchFoundedDate() -> Date
+    func fetchProfileImg() -> UIImage
 }
 
 
 
-class CreateCompanyView: UIView, CreateCompanyViewDelegate {
-    internal var delegate: CreateCompanyViewDelegate?
+class CreateCompanyView: UIView, CreateCompanyViewProtocol {
+    internal var delegate: CreateCompanyViewProtocol?
+    public var imgViewDelegate: CreateCompanyViewImageViewDelegate?
     public var company: CompanyModel? {
         didSet{
             nameTextField.text = company?.name
+            guard let founded = company?.founded else {return}
+            datePicker.date = founded
+            guard let profileImgData = company?.profileImgData else {return }
+            guard let profileImg = UIImage(data: profileImgData) else {return}
+            profileImageView.image = profileImg
         }
     }
     
+    public var profileImg: UIImage?{
+        didSet{
+            profileImageView.image = profileImg
+        }
+    }
     
-    
-    internal var profileImageView: UIImageView = {
+    internal lazy var profileImageView: UIImageView = {
        let imgView = UIImageView()
         imgView.image = UIImage(named: "select_photo_empty")
+        imgView.contentMode = .scaleAspectFill
+       //為了讓imgView可以被使用者點選
+        imgView.isUserInteractionEnabled = true // imgViews by default are not interactive with user
+        imgView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTapImageView)))
         return imgView
     }()
 
-    internal var selectePhotoButton: UIButton = {
-       let btn = UIButton(type: .system)
-        btn.setTitle("Select Photos", for: .normal)
-        btn.setTitleColor(UIColor.black, for: .normal)
-        btn.layer.borderWidth = 1.0
-        btn.layer.borderColor = UIColor.gray.cgColor
-        btn.layer.cornerRadius = 5.0
-        return btn
-    }()
+    @objc fileprivate func handleTapImageView(){
+        print("U tap the imgView...")
+        imgViewDelegate?.presentImgPicker()
+    }
+    
+    
 
     internal var nameTextField: UITextField = {
        let textField = UITextField()
@@ -72,23 +91,24 @@ class CreateCompanyView: UIView, CreateCompanyViewDelegate {
     }()
 
     internal var datePicker: UIDatePicker = {
-       let picker = UIDatePicker()
-        return picker
+       let dp = UIDatePicker()
+        dp.datePickerMode = .date
+        return dp
     }()
     
     internal func setupViews(){
         addSubview(profileImageView)
-        addSubview(selectePhotoButton)
         addSubview(nameTextField)
         addSubview(foundedLabel)
         addSubview(presentDatePickerLabel)
         addSubview(datePicker)
-        profileImageView.anchor(top: topAnchor, bottom: nil, left: nil, right: nil, topPadding: 10, bottomPadding: 0, leftPadding: 0, rightPadding: 0, width: 100, height: 100)
+        profileImageView.anchor(top: topAnchor, bottom: nil, left: nil, right: nil, topPadding: 10, bottomPadding: 0, leftPadding: 0, rightPadding: 0, width: 150, height: 150)
         profileImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        profileImageView.layoutIfNeeded()
+        profileImageView.layer.cornerRadius = profileImageView.frame.height/2
+        profileImageView.clipsToBounds = true
         
-        selectePhotoButton.anchor(top: profileImageView.bottomAnchor, bottom: nil, left: leftAnchor, right: rightAnchor, topPadding: 10, bottomPadding: 0, leftPadding: 10, rightPadding: 10, width: 0, height: 50)
-        selectePhotoButton.layoutIfNeeded()
-        nameTextField.anchor(top: selectePhotoButton.bottomAnchor, bottom: nil, left: selectePhotoButton.leftAnchor, right: selectePhotoButton.rightAnchor, topPadding: 10, bottomPadding: 0, leftPadding: 0, rightPadding: 0, width: 0, height: selectePhotoButton.frame.height)
+        nameTextField.anchor(top: profileImageView.bottomAnchor, bottom: nil, left: leftAnchor, right: rightAnchor, topPadding: 10, bottomPadding: 0, leftPadding: 10, rightPadding: 10, width: 0, height: 30)
         
         nameTextField.layoutIfNeeded()
         foundedLabel.anchor(top: nameTextField.bottomAnchor, bottom: nil, left: nameTextField.leftAnchor, right: nil, topPadding: 10, bottomPadding: 0, leftPadding: 0, rightPadding: 0, width: 90, height: nameTextField.frame.height)
@@ -103,7 +123,15 @@ class CreateCompanyView: UIView, CreateCompanyViewDelegate {
         return name
     }
     
+    public func fetchFoundedDate() -> Date{
+        let foundedDate = datePicker.date
+        return foundedDate
+    }
     
+    public func fetchProfileImg() -> UIImage {
+        guard let img = profileImageView.image else{ return UIImage()}
+        return img
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -115,9 +143,6 @@ class CreateCompanyView: UIView, CreateCompanyViewDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
-    
 }
 
 

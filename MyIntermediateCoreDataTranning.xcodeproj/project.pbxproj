@@ -16,8 +16,8 @@
 		C00FDEA62048A6D900DF3CDD /* CreateCompanyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00FDEA52048A6D900DF3CDD /* CreateCompanyController.swift */; };
 		C00FDEC62049BB5900DF3CDD /* CreateCompanyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00FDEC52049BB5900DF3CDD /* CreateCompanyView.swift */; };
 		C00FDEC92049FFB800DF3CDD /* MyIntermediateCoreDatatranningModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C00FDEC72049FFB800DF3CDD /* MyIntermediateCoreDatatranningModel.xcdatamodeld */; };
-		C00FDF4D204DE9C300DF3CDD /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00FDF4C204DE9C300DF3CDD /* Company.swift */; };
 		C00FDF4F204DF0B900DF3CDD /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00FDF4E204DF0B900DF3CDD /* CoreDataManager.swift */; };
+		C048E0842053A10D001ECCE4 /* CompanyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C048E0832053A10D001ECCE4 /* CompanyCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,8 +32,8 @@
 		C00FDEA52048A6D900DF3CDD /* CreateCompanyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCompanyController.swift; sourceTree = "<group>"; };
 		C00FDEC52049BB5900DF3CDD /* CreateCompanyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCompanyView.swift; sourceTree = "<group>"; };
 		C00FDEC82049FFB800DF3CDD /* MyIntermediateCoreDatatranningModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MyIntermediateCoreDatatranningModel.xcdatamodel; sourceTree = "<group>"; };
-		C00FDF4C204DE9C300DF3CDD /* Company.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Company.swift; sourceTree = "<group>"; };
 		C00FDF4E204DF0B900DF3CDD /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		C048E0832053A10D001ECCE4 /* CompanyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,11 +68,11 @@
 			children = (
 				C00FDE8B2047AC6200DF3CDD /* AppDelegate.swift */,
 				C00FDE9F2047AED900DF3CDD /* CompaniesController.swift */,
+				C048E0832053A10D001ECCE4 /* CompanyCell.swift */,
 				C00FDEA52048A6D900DF3CDD /* CreateCompanyController.swift */,
 				C00FDEC52049BB5900DF3CDD /* CreateCompanyView.swift */,
 				C00FDF4E204DF0B900DF3CDD /* CoreDataManager.swift */,
 				C00FDEA120486EBA00DF3CDD /* Extension.swift */,
-				C00FDF4C204DE9C300DF3CDD /* Company.swift */,
 				C00FDE8F2047AC6200DF3CDD /* Main.storyboard */,
 				C00FDE922047AC6200DF3CDD /* Assets.xcassets */,
 				C00FDE942047AC6200DF3CDD /* LaunchScreen.storyboard */,
@@ -157,8 +157,8 @@
 				C00FDEA220486EBA00DF3CDD /* Extension.swift in Sources */,
 				C00FDE8C2047AC6200DF3CDD /* AppDelegate.swift in Sources */,
 				C00FDEC92049FFB800DF3CDD /* MyIntermediateCoreDatatranningModel.xcdatamodeld in Sources */,
+				C048E0842053A10D001ECCE4 /* CompanyCell.swift in Sources */,
 				C00FDEC62049BB5900DF3CDD /* CreateCompanyView.swift in Sources */,
-				C00FDF4D204DE9C300DF3CDD /* Company.swift in Sources */,
 				C00FDEA62048A6D900DF3CDD /* CreateCompanyController.swift in Sources */,
 				C00FDF4F204DF0B900DF3CDD /* CoreDataManager.swift in Sources */,
 				C00FDEA02047AED900DF3CDD /* CompaniesController.swift in Sources */,

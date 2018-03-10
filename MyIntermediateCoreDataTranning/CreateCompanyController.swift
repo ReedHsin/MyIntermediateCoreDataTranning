@@ -22,9 +22,11 @@ protocol CreateCompanyControllerPrototcol {
 class CreateCompanyController: UIViewController {
     let createCompanyView = CreateCompanyView()
     var delegate: AddAndEditCompanyDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.darkBlueColor
+        createCompanyView.imgViewDelegate = self
         setupCreateCompanyNaviBar()
         setupViews()
     }
@@ -83,7 +85,13 @@ extension CreateCompanyController: CreateCompanyControllerPrototcol{
         let companyModel = NSEntityDescription.insertNewObject(forEntityName: "CompanyModel", into: context)
         //1.4:針對entity的欄位去新增資料(目前我們的company entity只有name欄位)
         let companyName = createCompanyView.fetchNameTextFieldText()
+        let foundedDate = createCompanyView.fetchFoundedDate()
         companyModel.setValue(companyName, forKey: "name")
+        companyModel.setValue(foundedDate, forKey: "founded")
+        
+        let profileImg = createCompanyView.fetchProfileImg()
+        let imgData = UIImageJPEGRepresentation(profileImg, 1.0)
+        companyModel.setValue(imgData, forKey: "profileImgData")
         //perform the save(做完這步，此時你的company model已經被建立在core data中了)
         //記得要用do-catch來實作context.save
         //接下來，到CompaniesController中的viewDidLoad，在程式一開始執行時，去檢查core data中有沒有存資料
@@ -102,6 +110,11 @@ extension CreateCompanyController: CreateCompanyControllerPrototcol{
         let context = CoreDataManager.shared.persistantContainer.viewContext
         guard let company = createCompanyView.company else {return}
         company.name = createCompanyView.fetchNameTextFieldText()
+        company.founded = createCompanyView.fetchFoundedDate()
+        
+        let profileImgData = UIImageJPEGRepresentation(createCompanyView.fetchProfileImg(), 1.0)
+        company.profileImgData = profileImgData
+        
         do{
             try context.save()
             dismiss(animated: true){
@@ -120,3 +133,30 @@ extension CreateCompanyController: CreateCompanyControllerPrototcol{
     }
 }
 
+extension CreateCompanyController: CreateCompanyViewImageViewDelegate{
+    func presentImgPicker() {
+        let imgPickerController = UIImagePickerController()
+        imgPickerController.delegate = self
+        imgPickerController.allowsEditing = true
+        present(imgPickerController, animated: true, completion: nil)
+    }
+}
+
+extension CreateCompanyController: UINavigationControllerDelegate, UIImagePickerControllerDelegate{
+    //在IOS10後，都要詢問使用者才可以去得使用手機相簿的權限
+    //info.plist -> 
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        //我們可以加入 imgPickerController.allowsEditing = true 來縮放照片，也就是我們的editedImg
+        if let editedImg = info[UIImagePickerControllerEditedImage] as? UIImage{
+            createCompanyView.profileImg = editedImg
+        }else if let originalImg = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            createCompanyView.profileImg = originalImg
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    
+}

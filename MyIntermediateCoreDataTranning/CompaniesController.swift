@@ -59,13 +59,43 @@ extension CompaniesController: CompaniesControllerProtocol{
 
         //設定右邊的icon
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "plus")?.withRenderingMode(.alwaysOriginal) , style: .plain, target: self, action: #selector(handleAddCompany))
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Reset", style: .plain, target: self, action: #selector(handleResetItem))
     }
     
-    @objc func handleAddCompany(){
+    @objc private func handleAddCompany(){
         let createCompanyController = CreateCompanyController()
         createCompanyController.delegate = self
         let naviController = CustomNavigationController(rootViewController: createCompanyController)
         present(naviController, animated: true, completion: nil)
+    }
+    
+    @objc private func handleResetItem(){
+        let context = CoreDataManager.shared.persistantContainer.viewContext
+        //這種方式也可以把資料從coreData中刪除
+        //但無法批量刪除
+        //        companies.forEach { (company) in
+//            context.delete(company)
+//        }
+        
+        //這個方式可以批量刪除Data
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: CompanyModel.fetchRequest())
+        do{
+            try context.execute(batchDeleteRequest)
+            //但若想要有動畫的效果的話，就不能用這種方式
+            //而是要一列一列的刪除，並往左移
+            var indexPathToMove = [IndexPath]()
+            for (index, _) in companies.enumerated(){
+                let indexPath = IndexPath(row: index, section: 0)
+                indexPathToMove.append(indexPath)
+            }
+            companies.removeAll()
+            tableView.deleteRows(at: indexPathToMove, with: .left)
+//            companies.removeAll()
+//            tableView.reloadData()
+        }catch let deleteErr{
+            print("Failed to batch delete company: ", deleteErr.localizedDescription)
+        }
     }
     
     internal func setupTableView(){
@@ -85,7 +115,7 @@ extension CompaniesController: CompaniesControllerProtocol{
     }
     
     internal func registerCell(){
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CompanyCell")
+        tableView.register(CompanyCell.self, forCellReuseIdentifier: "CompanyCell")
     }
     
     internal func fetchCompaniesFromCoreData() {
@@ -168,15 +198,31 @@ extension CompaniesController: UITableViewDelegate, UITableViewDataSource{
         return 50
     }
     
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footerLabel = UILabel()
+        footerLabel.text = "No avaliable companies..."
+        footerLabel.textColor = UIColor.white
+        footerLabel.textAlignment = .center
+        footerLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        
+        return footerLabel
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return companies.count == 0 ? 150 : 0
+    }
+    
+   
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CompanyCell", for: indexPath)
-        cell.backgroundColor = UIColor.tealColor
-        let company = companies[indexPath.item]
-        cell.textLabel?.text = company.name
-        cell.textLabel?.textColor = UIColor.white
-        cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CompanyCell", for: indexPath) as! CompanyCell
+        cell.company = companies[indexPath.item]
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
@@ -206,10 +252,10 @@ extension CompaniesController: UITableViewDelegate, UITableViewDataSource{
     }
     
     fileprivate func editHandlerFunction(_: UITableViewRowAction, indexPath: IndexPath){
-        let editController = CreateCompanyController()
-        editController.createCompanyView.company = companies[indexPath.row]
-        editController.delegate = self
-        let naviController = UINavigationController(rootViewController: editController)
+        let createCompanyController = CreateCompanyController()
+        createCompanyController.createCompanyView.company = companies[indexPath.row]
+        createCompanyController.delegate = self
+        let naviController = UINavigationController(rootViewController: createCompanyController)
         present(naviController, animated: true, completion: nil)
     }
     
