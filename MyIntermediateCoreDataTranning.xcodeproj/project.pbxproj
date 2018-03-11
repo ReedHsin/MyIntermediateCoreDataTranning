@@ -24,6 +24,7 @@
 		C048E0902054AB0F001ECCE4 /* CreateCompanyController+UINavigationControllerDelegate+UIImagePickerControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C048E08F2054AB0F001ECCE4 /* CreateCompanyController+UINavigationControllerDelegate+UIImagePickerControllerDelegate.swift */; };
 		C048E0942054B09B001ECCE4 /* EmployeesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C048E0932054B09B001ECCE4 /* EmployeesController.swift */; };
 		C0884A7F2054BC7700FCE890 /* CreateEmployeeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0884A7E2054BC7700FCE890 /* CreateEmployeeViewController.swift */; };
+		C0884A812055839000FCE890 /* CreateEmployeeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0884A802055839000FCE890 /* CreateEmployeeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		C048E08F2054AB0F001ECCE4 /* CreateCompanyController+UINavigationControllerDelegate+UIImagePickerControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateCompanyController+UINavigationControllerDelegate+UIImagePickerControllerDelegate.swift"; sourceTree = "<group>"; };
 		C048E0932054B09B001ECCE4 /* EmployeesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeesController.swift; sourceTree = "<group>"; };
 		C0884A7E2054BC7700FCE890 /* CreateEmployeeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEmployeeViewController.swift; sourceTree = "<group>"; };
+		C0884A802055839000FCE890 /* CreateEmployeeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEmployeeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +86,7 @@
 				C00FDF4E204DF0B900DF3CDD /* CoreDataManager.swift */,
 				C048E0932054B09B001ECCE4 /* EmployeesController.swift */,
 				C0884A7E2054BC7700FCE890 /* CreateEmployeeViewController.swift */,
+				C0884A802055839000FCE890 /* CreateEmployeeView.swift */,
 				C048E0952054B9BE001ECCE4 /* Utilities */,
 				C00FDE8F2047AC6200DF3CDD /* Main.storyboard */,
 				C00FDE922047AC6200DF3CDD /* Assets.xcassets */,
@@ -240,6 +243,7 @@
 				C048E0882054A99D001ECCE4 /* CompaniesController+AddAndEditCompanyDelegate.swift in Sources */,
 				C00FDEA62048A6D900DF3CDD /* CreateCompanyController.swift in Sources */,
 				C048E08A2054A9E4001ECCE4 /* CompaniesController+TableView.swift in Sources */,
+				C0884A812055839000FCE890 /* CreateEmployeeView.swift in Sources */,
 				C00FDF4F204DF0B900DF3CDD /* CoreDataManager.swift in Sources */,
 				C00FDEA02047AED900DF3CDD /* CompaniesController.swift in Sources */,
 			);

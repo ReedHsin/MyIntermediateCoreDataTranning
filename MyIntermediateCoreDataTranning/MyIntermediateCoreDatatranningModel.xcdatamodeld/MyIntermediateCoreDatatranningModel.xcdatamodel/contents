@@ -5,7 +5,12 @@
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="profileImgData" optional="YES" attributeType="Binary" syncable="YES"/>
     </entity>
+    <entity name="Employee" representedClassName="Employee" syncable="YES" codeGenerationType="class">
+        <attribute name="birthday" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <elements>
         <element name="CompanyModel" positionX="-63" positionY="-18" width="128" height="90"/>
+        <element name="Employee" positionX="-63" positionY="9" width="128" height="75"/>
     </elements>
 </model>

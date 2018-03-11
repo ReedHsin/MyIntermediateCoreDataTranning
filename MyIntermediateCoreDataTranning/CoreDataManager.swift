@@ -7,6 +7,7 @@
 //
 
 import CoreData
+import UIKit
 struct CoreDataManager {
     //It will leave forever as long as ur app is still alive, it's properites will too
     static let shared = CoreDataManager()//這樣的寫法可以創造singleTern
@@ -43,6 +44,40 @@ struct CoreDataManager {
             completion(companies)
         }catch let err {
             print("Fetching of companies failure: ", err.localizedDescription)
+        }
+    }
+    
+    func saveCompanyData(companyName: String, foundedDate: Date, profileImage: UIImage, completion: (CompanyModel) -> ()) {
+        let context = persistantContainer.viewContext
+        let companyModel = NSEntityDescription.insertNewObject(forEntityName: "CompanyModel", into: context)
+        
+        companyModel.setValue(companyName, forKey: "name")
+        companyModel.setValue(foundedDate, forKey: "founded")
+        let imgData = UIImageJPEGRepresentation(profileImage, 1.0)
+        companyModel.setValue(imgData, forKey: "profileImgData")
+        do{
+            try context.save()
+            //success
+            completion(companyModel as! CompanyModel)
+        }catch let saveErr{
+            print("Failed to save: ", saveErr.localizedDescription)
+        }
+    }
+    
+    func saveEmployeeData(name: String, birthday: Date, completion: (Employee) -> ()) -> Error?{
+        let context = persistantContainer.viewContext
+        let employee = NSEntityDescription.insertNewObject(forEntityName: "Employee", into: context)
+        
+        employee.setValue(name, forKey: "name")
+        employee.setValue(birthday, forKey: "birthday")
+        do{
+            try context.save()
+            //success
+            completion(employee as! Employee)
+            return nil
+        }catch let saveErr{
+            print("Failed to save: ", saveErr.localizedDescription)
+            return saveErr
         }
     }
     

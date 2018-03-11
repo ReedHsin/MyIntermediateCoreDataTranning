@@ -86,10 +86,14 @@ extension UIViewController{
     func setupLeftNavigationItemByTitle(title: String, selector: Selector) {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: title, style: .plain, target: self, action: selector)
     }
+    
+    func setupLightBlueBackgroundView() {
+        let lightBlueView = UIView()
+        lightBlueView.backgroundColor = .lightBlue
+        view.addSubview(lightBlueView)
+        lightBlueView.anchor(top: view.topAnchor, bottom: nil, left: view.leftAnchor, right: view.rightAnchor, topPadding: 0, bottomPadding: 0, leftPadding: 0, rightPadding: 0, width: 0, height: 150)
+    }
 }
-
-
-
 
 
 
