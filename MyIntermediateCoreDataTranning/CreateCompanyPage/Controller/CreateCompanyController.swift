@@ -21,7 +21,7 @@ protocol CreateCompanyControllerPrototcol {
 
 class CreateCompanyController: UIViewController {
     let createCompanyView = CreateCompanyView()
-    var delegate: AddAndEditCompanyDelegate?
+    var addAndEditDelegate: AddAndEditCompanyDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,8 +44,6 @@ class CreateCompanyController: UIViewController {
 
 
 extension CreateCompanyController: CreateCompanyControllerPrototcol{
-    
-    
     internal func setupCreateCompanyNaviBar(){
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(handleCancelItem))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(handleSaveItem))
@@ -99,7 +97,7 @@ extension CreateCompanyController: CreateCompanyControllerPrototcol{
             try context.save()
             //success
             dismiss(animated: true){
-                self.delegate?.didAddCompany(company: companyModel as! CompanyModel)
+                self.addAndEditDelegate?.didAddCompany(company: companyModel as! CompanyModel)
             }
         }catch let saveErr{
             print("Failed to save: ", saveErr.localizedDescription)
@@ -118,7 +116,7 @@ extension CreateCompanyController: CreateCompanyControllerPrototcol{
         do{
             try context.save()
             dismiss(animated: true){
-                self.delegate?.didEditCompany(company: company)
+                self.addAndEditDelegate?.didEditCompany(company: company)
             }
         }catch let saveErr{
             print("Failed to edit: ", saveErr)
@@ -133,30 +131,6 @@ extension CreateCompanyController: CreateCompanyControllerPrototcol{
     }
 }
 
-extension CreateCompanyController: CreateCompanyViewImageViewDelegate{
-    func presentImgPicker() {
-        let imgPickerController = UIImagePickerController()
-        imgPickerController.delegate = self
-        imgPickerController.allowsEditing = true
-        present(imgPickerController, animated: true, completion: nil)
-    }
-}
 
-extension CreateCompanyController: UINavigationControllerDelegate, UIImagePickerControllerDelegate{
-    //在IOS10後，都要詢問使用者才可以去得使用手機相簿的權限
-    //info.plist -> 
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        //我們可以加入 imgPickerController.allowsEditing = true 來縮放照片，也就是我們的editedImg
-        if let editedImg = info[UIImagePickerControllerEditedImage] as? UIImage{
-            createCompanyView.profileImg = editedImg
-        }else if let originalImg = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            createCompanyView.profileImg = originalImg
-        }
-        dismiss(animated: true, completion: nil)
-    }
-    
-}
+
+
