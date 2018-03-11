@@ -81,6 +81,15 @@ struct CoreDataManager {
         }
     }
     
-    
+    func fetchEmployee(completion: (_ employees: [Employee])->()) {
+        let context = persistantContainer.viewContext
+        let fetchRequest = NSFetchRequest<Employee>(entityName: "Employee")
+        do{
+            let employee = try context.fetch(fetchRequest)
+            completion(employee)
+        }catch let err {
+            print("Fetching of companies failure: ", err.localizedDescription)
+        }
+    }
     
 }

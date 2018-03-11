@@ -7,7 +7,12 @@
 //
 
 import UIKit
+protocol CreateEmployeeViewControllerDelegate {
+    func didAddEmployee(employee: Employee)
+}
+
 class CreateEmployeeViewController: UIViewController{
+    var delegate: CreateEmployeeViewControllerDelegate?
     let createEmployeeView: CreateEmployeeView = {
        var cev = CreateEmployeeView()
         return cev
@@ -40,7 +45,7 @@ class CreateEmployeeViewController: UIViewController{
         let date = createEmployeeView.datePicker.date
         let error = CoreDataManager.shared.saveEmployeeData(name: name, birthday: date) { (employee) in
             dismiss(animated: true, completion: {
-                
+                self.delegate?.didAddEmployee(employee: employee)
             })
         }
         if let error = error{

@@ -8,6 +8,8 @@
 
 import UIKit
 class EmployeesViewController: UIViewController {
+    var employees = [Employee]()
+    
     var company: CompanyModel?{
         didSet{
             guard let company = company else {return}
@@ -26,6 +28,7 @@ class EmployeesViewController: UIViewController {
         tableView.dataSource = self
         setupTableView()
         registerCell()
+        fetchEmployees()
     }
     
     fileprivate func setupTableView(){
@@ -45,9 +48,17 @@ class EmployeesViewController: UIViewController {
 //
     @objc fileprivate func handleAddItem(){
         let createEmployeeController = CreateEmployeeViewController()
+        createEmployeeController.delegate = self
         let naviController = UINavigationController(rootViewController: createEmployeeController)
         present(naviController, animated: true, completion: nil)
         
+    }
+    
+    fileprivate func fetchEmployees(){
+        CoreDataManager.shared.fetchEmployee { (employees) in
+            self.employees = employees
+            tableView.reloadData()
+        }
     }
 }
 
@@ -58,12 +69,14 @@ extension EmployeesViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return employees.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
         cell.backgroundColor = UIColor.tealColor
+        cell.textLabel?.text = employees[indexPath.row].name
+        cell.textLabel?.textColor = .white
         return cell
     }
     
@@ -90,3 +103,16 @@ extension EmployeesViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
 }
+
+extension EmployeesViewController: CreateEmployeeViewControllerDelegate{
+    func didAddEmployee(employee: Employee) {
+        employees.append(employee)
+        let indexPath0 = IndexPath(row: employees.count - 1, section: 0)
+        let indexPath1 = IndexPath(row: employees.count - 1, section: 1)
+        let indexPath2 = IndexPath(row: employees.count - 1, section: 2)
+        tableView.insertRows(at: [indexPath0, indexPath1, indexPath2], with: .middle)
+//        tableView.reloadData()
+    }
+}
+
+
