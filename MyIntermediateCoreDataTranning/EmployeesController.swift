@@ -16,7 +16,7 @@ class EmployeesViewController: UIViewController {
     var staffEmployees = [Employee]()
     var seniorEmployees = [Employee]()
     var executiveEmployees = [Employee]()
-    var allEmployees = [[Employee]]()
+    
     var company: Company?{
         didSet{
             guard let company = company else {return}
@@ -62,34 +62,59 @@ class EmployeesViewController: UIViewController {
         
     }
     
+    var allEmployees = [[Employee]]()
+    var employeeTypes = [
+        EmployeeTypeEnum.Executive.rawValue,
+        EmployeeTypeEnum.SeniorManegement.rawValue,
+        EmployeeTypeEnum.Staff.rawValue
+    ]
     fileprivate func fetchEmployees(){
         guard let employees = company?.employees?.allObjects as? [Employee] else {return}
+        allEmployees = []//因為有個didAddEmployee function也會call fetchEmployees，若沒有把allEmployees清空，可能會造成他又新增一個array到allEmployees，這會使得一開始只有設定3個section出錯
         //test
         //name count>5
-        executiveEmployees = employees.filter{ (employee) -> Bool in
-            guard let count = employee.name?.count else {return false}
-            return count > 5
-        }
+//        executiveEmployees = employees.filter{ (employee) -> Bool in
+//            guard let count = employee.name?.count else {return false}
+//            return count > 5
+//        }
         //<2
-        staffEmployees = employees.filter{ (employee) -> Bool in
-            guard let count = employee.name?.count else {return false}
-            return count < 5
-        }
+//        staffEmployees = employees.filter{ (employee) -> Bool in
+//            guard let count = employee.name?.count else {return false}
+//            return count < 5
+//        }
         //2~5
-        seniorEmployees = employees.filter{ (employee) -> Bool in
-            guard let count = employee.name?.count else {return false}
-            return count < 5 && count > 2
-        }
+//        seniorEmployees = employees.filter{ (employee) -> Bool in
+//            guard let count = employee.name?.count else {return false}
+//            return count < 5 && count > 2
+//        }
         
         //依照employee的職位去區分
+        executiveEmployees = employees.filter{
+            $0.type == EmployeeTypeEnum.Executive.rawValue
+        }
+        staffEmployees = employees.filter{
+            $0.type == EmployeeTypeEnum.Staff.rawValue
+        }
+        seniorEmployees = employees.filter{
+            $0.type == EmployeeTypeEnum.SeniorManegement.rawValue
+        }
         
         
+        //最進化的寫法
+        employeeTypes.forEach { (employeeType) in
+            //總共會跑三次，依序為Executive, SeniorManegement, Staff
+            allEmployees.append(
+                
+                employees.filter{ $0.type == employeeType}//這邊出來會是個array: [Employee]
+            )
+        }
         
-        allEmployees = [
-            executiveEmployees,
-            seniorEmployees,
-            staffEmployees
-        ]
+        
+//        allEmployees = [
+//            executiveEmployees,
+//            seniorEmployees,
+//            staffEmployees
+//        ]
     }
 }
 
@@ -117,21 +142,24 @@ extension EmployeesViewController: UITableViewDelegate, UITableViewDataSource{
         return cell
     }
     
+    
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label = IdentedLabel()
         label.backgroundColor = .lightBlue
         label.textColor = .black
         label.font = UIFont.boldSystemFont(ofSize: 22)
-        switch section {
-        case 0:
-            label.text = "Executive"
-        case 1:
-            label.text = "Senior Management"
-        case 2:
-            label.text = "Staff"
-        default:
-            return label
-        }
+//        switch section {
+//        case 0:
+//            label.text = "Executive"
+//        case 1:
+//            label.text = "Senior Management"
+//        case 2:
+//            label.text = "Staff"
+//        default:
+//            return label
+//        }
+        
+        label.text = employeeTypes[section]
         return label
     }
     
@@ -143,21 +171,36 @@ extension EmployeesViewController: UITableViewDelegate, UITableViewDataSource{
 
 extension EmployeesViewController: CreateEmployeeViewControllerDelegate{
     func didAddEmployee(employee: Employee) {
-        guard let count = employee.name?.count else {return}
-        let indexPath: IndexPath?
-        if count > 5{
-            allEmployees[0].append(employee)
-            indexPath = IndexPath(row: executiveEmployees.count , section: 0)
-        }else if count < 2{
-            allEmployees[2].append(employee)
-            indexPath = IndexPath(row: staffEmployees.count , section: 2)
-        }else{
-            allEmployees[1].append(employee)
-            indexPath = IndexPath(row: seniorEmployees.count , section: 1)
-        }
-        guard let newIndexPath = indexPath else {return}
-        tableView.insertRows(at: [newIndexPath], with: .middle)
+        //使用名字字數做分類的情況，只用於test
+//        guard let count = employee.name?.count else {return}
+//        let indexPath: IndexPath?
+//        if count > 5{
+//            allEmployees[0].append(employee)
+//            indexPath = IndexPath(row: executiveEmployees.count , section: 0)
+//        }else if count < 2{
+//            allEmployees[2].append(employee)
+//            indexPath = IndexPath(row: staffEmployees.count , section: 2)
+//        }else{
+//            allEmployees[1].append(employee)
+//            indexPath = IndexPath(row: seniorEmployees.count , section: 1)
+//        }
+//        guard let newIndexPath = indexPath else {return}
+//        tableView.insertRows(at: [newIndexPath], with: .middle)
+        
+        
+        //一次抓取所有的employees，再一次全更新，但沒有tableView的動畫
+//        fetchEmployees()
 //        tableView.reloadData()
+        
+        //用insert的方式插入新的員工，有動畫
+        guard let type = employee.type else {
+            return
+        }
+        guard let section = employeeTypes.index(of: type) else {return}
+        let row = allEmployees[section].count
+        let indexPath = IndexPath(row: row, section: section)
+        allEmployees[section].append(employee)
+        tableView.insertRows(at: [indexPath], with: .middle)
     }
 }
 

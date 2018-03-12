@@ -26,6 +26,7 @@
 		C0884A7F2054BC7700FCE890 /* CreateEmployeeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0884A7E2054BC7700FCE890 /* CreateEmployeeViewController.swift */; };
 		C0884A812055839000FCE890 /* CreateEmployeeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0884A802055839000FCE890 /* CreateEmployeeView.swift */; };
 		C0884A83205666DF00FCE890 /* IdentedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0884A82205666DF00FCE890 /* IdentedLabel.swift */; };
+		C0884A872056ECD000FCE890 /* EmployeeTypeEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0884A862056ECD000FCE890 /* EmployeeTypeEnum.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		C0884A7E2054BC7700FCE890 /* CreateEmployeeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEmployeeViewController.swift; sourceTree = "<group>"; };
 		C0884A802055839000FCE890 /* CreateEmployeeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEmployeeView.swift; sourceTree = "<group>"; };
 		C0884A82205666DF00FCE890 /* IdentedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentedLabel.swift; sourceTree = "<group>"; };
+		C0884A862056ECD000FCE890 /* EmployeeTypeEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeTypeEnum.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 				C048E0862054A93C001ECCE4 /* CreateCompanyPage */,
 				C00FDF4E204DF0B900DF3CDD /* CoreDataManager.swift */,
 				C048E0932054B09B001ECCE4 /* EmployeesController.swift */,
+				C0884A862056ECD000FCE890 /* EmployeeTypeEnum.swift */,
 				C0884A7E2054BC7700FCE890 /* CreateEmployeeViewController.swift */,
 				C0884A802055839000FCE890 /* CreateEmployeeView.swift */,
 				C048E0952054B9BE001ECCE4 /* Utilities */,
@@ -238,6 +241,7 @@
 				C00FDE8C2047AC6200DF3CDD /* AppDelegate.swift in Sources */,
 				C0884A7F2054BC7700FCE890 /* CreateEmployeeViewController.swift in Sources */,
 				C048E0902054AB0F001ECCE4 /* CreateCompanyController+UINavigationControllerDelegate+UIImagePickerControllerDelegate.swift in Sources */,
+				C0884A872056ECD000FCE890 /* EmployeeTypeEnum.swift in Sources */,
 				C00FDEC92049FFB800DF3CDD /* MyIntermediateCoreDatatranningModel.xcdatamodeld in Sources */,
 				C048E0942054B09B001ECCE4 /* EmployeesController.swift in Sources */,
 				C048E08E2054AADF001ECCE4 /* CreateCompanyController+CreateCompanyViewImageViewDelegate.swift in Sources */,
