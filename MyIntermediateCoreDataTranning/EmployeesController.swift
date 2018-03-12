@@ -7,9 +7,16 @@
 //
 
 import UIKit
+
+
+
 class EmployeesViewController: UIViewController {
-    var employees = [Employee]()
     
+   
+    var staffEmployees = [Employee]()
+    var seniorEmployees = [Employee]()
+    var executiveEmployees = [Employee]()
+    var allEmployees = [[Employee]]()
     var company: Company?{
         didSet{
             guard let company = company else {return}
@@ -57,38 +64,57 @@ class EmployeesViewController: UIViewController {
     
     fileprivate func fetchEmployees(){
         guard let employees = company?.employees?.allObjects as? [Employee] else {return}
-        self.employees = employees
+        //test
+        //name count>5
+        executiveEmployees = employees.filter{ (employee) -> Bool in
+            guard let count = employee.name?.count else {return false}
+            return count > 5
+        }
+        //<2
+        staffEmployees = employees.filter{ (employee) -> Bool in
+            guard let count = employee.name?.count else {return false}
+            return count < 5
+        }
+        //2~5
+        seniorEmployees = employees.filter{ (employee) -> Bool in
+            guard let count = employee.name?.count else {return false}
+            return count < 5 && count > 2
+        }
+        
+        allEmployees = [
+            executiveEmployees,
+            seniorEmployees,
+            staffEmployees
+        ]
     }
 }
 
 
 extension EmployeesViewController: UITableViewDelegate, UITableViewDataSource{
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return allEmployees.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return employees.count
+        return allEmployees[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
         cell.backgroundColor = UIColor.tealColor
-        let employee = employees[indexPath.row]
+        let employee = allEmployees[indexPath.section][indexPath.row]
         cell.textLabel?.text = employee.name
         if let taxId = employee.employeeInformation?.taxId, let company = employee.company?.name, let birthdayDate = employee.employeeInformation?.birthday{
             let dateformatter = DateFormatter()
             let birthday = dateformatter.dateToStr(date: birthdayDate)
             cell.textLabel?.text = "\(employee.name ?? "")  -\(taxId)  -\(company) -\(birthday)"
-            
-            
         }
         cell.textLabel?.textColor = .white
         return cell
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label = UILabel()
+        let label = IdentedLabel()
         label.backgroundColor = .lightBlue
         label.textColor = .black
         label.font = UIFont.boldSystemFont(ofSize: 22)
@@ -113,11 +139,20 @@ extension EmployeesViewController: UITableViewDelegate, UITableViewDataSource{
 
 extension EmployeesViewController: CreateEmployeeViewControllerDelegate{
     func didAddEmployee(employee: Employee) {
-        employees.append(employee)
-        let indexPath0 = IndexPath(row: employees.count - 1, section: 0)
-        let indexPath1 = IndexPath(row: employees.count - 1, section: 1)
-        let indexPath2 = IndexPath(row: employees.count - 1, section: 2)
-        tableView.insertRows(at: [indexPath0, indexPath1, indexPath2], with: .middle)
+        guard let count = employee.name?.count else {return}
+        let indexPath: IndexPath?
+        if count > 5{
+            allEmployees[0].append(employee)
+            indexPath = IndexPath(row: executiveEmployees.count , section: 0)
+        }else if count < 2{
+            allEmployees[2].append(employee)
+            indexPath = IndexPath(row: staffEmployees.count , section: 2)
+        }else{
+            allEmployees[1].append(employee)
+            indexPath = IndexPath(row: seniorEmployees.count , section: 1)
+        }
+        guard let newIndexPath = indexPath else {return}
+        tableView.insertRows(at: [newIndexPath], with: .middle)
 //        tableView.reloadData()
     }
 }
