@@ -42,16 +42,43 @@ class CreateEmployeeViewController: UIViewController{
     }
     
     @objc private func handleSaveButton(){
-        guard let name = createEmployeeView.nameTextField.text, let company = company else {return}
-        let error = CoreDataManager.shared.saveEmployeeData(name: name, company: company) { (employee) in
-            dismiss(animated: true, completion: {
-                self.delegate?.didAddEmployee(employee: employee)
-            })
+        if checkIsFormValid(){
+            guard let name = createEmployeeView.nameTextField.text, let birthday = createEmployeeView.birthdayTextField.text , let company = company else {return}
+            let dateFormatter = DateFormatter()
+            guard let birthdayDate = dateFormatter.strToDate(date: birthday) else {
+                setAlert(title: "Bad Formatt for Birthday", message: "Check the birthday, plz...", actionTitle: "Ok")
+                return
+            }
+            
+            let error = CoreDataManager.shared.saveEmployeeData(name: name, birthday: birthdayDate, company: company) { (employee) in
+                dismiss(animated: true, completion: {
+                    self.delegate?.didAddEmployee(employee: employee)
+                })
+            }
+            if let error = error{
+                //is where u present error modal of some kind
+                //perhaps use a UIAlertController to show ur error message
+                print(error)
+            }
+        }else{
+            setAlert(title: "Blank Form", message: "Check the form, plz...", actionTitle: "Ok")
+
         }
-        if let error = error{
-            //is where u present error modal of some kind
-            //perhaps use a UIAlertController to show ur error message
-            print(error)
+    }
+    
+    fileprivate func checkIsFormValid() -> Bool{
+        let name = createEmployeeView.nameTextField.text
+        let birthday = createEmployeeView.birthdayTextField.text
+        if (name?.isEmpty)! || (birthday?.isEmpty)!{
+            return false
         }
+        return true
+    }
+    
+    func setAlert(title: String, message: String, actionTitle: String) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: actionTitle, style: .cancel)
+        alertController.addAction(action)
+        present(alertController, animated: true)
     }
 }

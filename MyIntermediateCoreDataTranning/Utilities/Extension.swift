@@ -96,5 +96,17 @@ extension UIViewController{
 }
 
 
+extension DateFormatter{
+    func dateToStr(date: Date) -> String{
+        self.dateFormat = "MM/dd/yyyy"
+        return self.string(from: date)
+    }
+    
+    func strToDate(date: String) -> Date? {
+        self.dateFormat = "MM/dd/yyyy"
+        return self.date(from: date)
+    }
+}
+
 
 

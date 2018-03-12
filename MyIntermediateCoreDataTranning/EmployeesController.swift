@@ -76,8 +76,12 @@ extension EmployeesViewController: UITableViewDelegate, UITableViewDataSource{
         cell.backgroundColor = UIColor.tealColor
         let employee = employees[indexPath.row]
         cell.textLabel?.text = employee.name
-        if let taxId = employee.employeeInformation?.taxId, let company = employee.company?.name{
-            cell.textLabel?.text = "\(employee.name ?? "")  -\(taxId)  -\(company)"
+        if let taxId = employee.employeeInformation?.taxId, let company = employee.company?.name, let birthdayDate = employee.employeeInformation?.birthday{
+            let dateformatter = DateFormatter()
+            let birthday = dateformatter.dateToStr(date: birthdayDate)
+            cell.textLabel?.text = "\(employee.name ?? "")  -\(taxId)  -\(company) -\(birthday)"
+            
+            
         }
         cell.textLabel?.textColor = .white
         return cell

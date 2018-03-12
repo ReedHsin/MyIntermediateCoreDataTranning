@@ -64,16 +64,18 @@ struct CoreDataManager {
         }
     }
     
-    func saveEmployeeData(name: String, company: Company, completion: (Employee) -> ()) -> Error?{
+    func saveEmployeeData(name: String, birthday: Date, company: Company, completion: (Employee) -> ()) -> Error?{
         let context = persistantContainer.viewContext
         let employee = NSEntityDescription.insertNewObject(forEntityName: "Employee", into: context) as! Employee
         
 //        employee.setValue(name, forKey: "name")
         employee.name = name//safer way to access attribute
+        
         let employeeInformation = NSEntityDescription.insertNewObject(forEntityName: "EmployeeInformation", into: context) as! EmployeeInformation
         let taxId = "364"
 //        employeeInformation.setValue(taxId, forKey: "taxId")
         employeeInformation.taxId = taxId
+        employeeInformation.birthday = birthday
         employee.employeeInformation = employeeInformation
 
         employee.company = company
