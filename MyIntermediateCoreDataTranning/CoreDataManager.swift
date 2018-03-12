@@ -24,7 +24,7 @@ struct CoreDataManager {
     }()
     
     
-    func fetchCompanies(completion: (_ companies: [CompanyModel]) -> ()) {
+    func fetchCompanies(completion: (_ companies: [Company]) -> ()) {
         //attempt my core data fetch somehow
         //        let persistantContainer = NSPersistentContainer(name: "MyIntermediateCoreDatatranningModel")
         //        persistantContainer.loadPersistentStores { (description, err) in
@@ -36,8 +36,8 @@ struct CoreDataManager {
         //直接用CoreDataMeneger Singletern
         let context = persistantContainer.viewContext
         //去抓取core data中存的資料
-        //這邊xcode會自動幫我們加<NSFetchRequestResult>，但是我們需要自行把它改成我們的entity name(這邊是CompanyModel)
-        let fetchRequest = NSFetchRequest<CompanyModel>(entityName: "CompanyModel")
+        //這邊xcode會自動幫我們加<NSFetchRequestResult>，但是我們需要自行把它改成我們的entity name(這邊是Company)
+        let fetchRequest = NSFetchRequest<Company>(entityName: "Company")
         //用do-catch來實做context.fetch
         do{
             let companies = try context.fetch(fetchRequest)
@@ -47,33 +47,40 @@ struct CoreDataManager {
         }
     }
     
-    func saveCompanyData(companyName: String, foundedDate: Date, profileImage: UIImage, completion: (CompanyModel) -> ()) {
+    func saveCompanyData(companyName: String, foundedDate: Date, profileImage: UIImage, completion: (Company) -> ()) {
         let context = persistantContainer.viewContext
-        let companyModel = NSEntityDescription.insertNewObject(forEntityName: "CompanyModel", into: context)
+        let company = NSEntityDescription.insertNewObject(forEntityName: "Company", into: context) as! Company
         
-        companyModel.setValue(companyName, forKey: "name")
-        companyModel.setValue(foundedDate, forKey: "founded")
+        company.setValue(companyName, forKey: "name")
+        company.setValue(foundedDate, forKey: "founded")
         let imgData = UIImageJPEGRepresentation(profileImage, 1.0)
-        companyModel.setValue(imgData, forKey: "profileImgData")
+        company.setValue(imgData, forKey: "profileImgData")
         do{
             try context.save()
             //success
-            completion(companyModel as! CompanyModel)
+            completion(company)
         }catch let saveErr{
             print("Failed to save: ", saveErr.localizedDescription)
         }
     }
     
-    func saveEmployeeData(name: String, birthday: Date, completion: (Employee) -> ()) -> Error?{
+    func saveEmployeeData(name: String, company: Company, completion: (Employee) -> ()) -> Error?{
         let context = persistantContainer.viewContext
-        let employee = NSEntityDescription.insertNewObject(forEntityName: "Employee", into: context)
+        let employee = NSEntityDescription.insertNewObject(forEntityName: "Employee", into: context) as! Employee
         
-        employee.setValue(name, forKey: "name")
-        employee.setValue(birthday, forKey: "birthday")
+//        employee.setValue(name, forKey: "name")
+        employee.name = name//safer way to access attribute
+        let employeeInformation = NSEntityDescription.insertNewObject(forEntityName: "EmployeeInformation", into: context) as! EmployeeInformation
+        let taxId = "364"
+//        employeeInformation.setValue(taxId, forKey: "taxId")
+        employeeInformation.taxId = taxId
+        employee.employeeInformation = employeeInformation
+
+        employee.company = company
         do{
             try context.save()
             //success
-            completion(employee as! Employee)
+            completion(employee)
             return nil
         }catch let saveErr{
             print("Failed to save: ", saveErr.localizedDescription)

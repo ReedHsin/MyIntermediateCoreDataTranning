@@ -13,6 +13,7 @@ protocol CreateEmployeeViewControllerDelegate {
 
 class CreateEmployeeViewController: UIViewController{
     var delegate: CreateEmployeeViewControllerDelegate?
+    var company: Company?
     let createEmployeeView: CreateEmployeeView = {
        var cev = CreateEmployeeView()
         return cev
@@ -41,9 +42,8 @@ class CreateEmployeeViewController: UIViewController{
     }
     
     @objc private func handleSaveButton(){
-        guard let name = createEmployeeView.nameTextField.text else {return}
-        let date = createEmployeeView.datePicker.date
-        let error = CoreDataManager.shared.saveEmployeeData(name: name, birthday: date) { (employee) in
+        guard let name = createEmployeeView.nameTextField.text, let company = company else {return}
+        let error = CoreDataManager.shared.saveEmployeeData(name: name, company: company) { (employee) in
             dismiss(animated: true, completion: {
                 self.delegate?.didAddEmployee(employee: employee)
             })

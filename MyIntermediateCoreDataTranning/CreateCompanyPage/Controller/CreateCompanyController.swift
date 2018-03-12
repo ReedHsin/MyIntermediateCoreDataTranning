@@ -9,8 +9,8 @@
 import UIKit
 import CoreData
 protocol AddAndEditCompanyDelegate {
-    func didAddCompany(company: CompanyModel)
-    func didEditCompany(company: CompanyModel)
+    func didAddCompany(company: Company)
+    func didEditCompany(company: Company)
 }
 
 protocol CreateCompanyControllerPrototcol {
@@ -66,9 +66,9 @@ extension CreateCompanyController: CreateCompanyControllerPrototcol{
         let companyName = createCompanyView.fetchNameTextFieldText()
         let foundedDate = createCompanyView.fetchFoundedDate()
         let profileImg = createCompanyView.fetchProfileImg()
-        CoreDataManager.shared.saveCompanyData(companyName: companyName, foundedDate: foundedDate, profileImage: profileImg) { (companyModel) in
+        CoreDataManager.shared.saveCompanyData(companyName: companyName, foundedDate: foundedDate, profileImage: profileImg) { (company) in
             dismiss(animated: true){
-                self.addAndEditDelegate?.didAddCompany(company: companyModel )
+                self.addAndEditDelegate?.didAddCompany(company: company )
             }
         }
     }

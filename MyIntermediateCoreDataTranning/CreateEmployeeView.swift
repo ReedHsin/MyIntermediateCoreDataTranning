@@ -8,7 +8,7 @@
 
 import UIKit
 class CreateEmployeeView: UIView {
-//    public var company: CompanyModel? {
+//    public var company: Company? {
 //        didSet{
 //            nameTextField.text = company?.name
 //            guard let founded = company?.founded else {return}

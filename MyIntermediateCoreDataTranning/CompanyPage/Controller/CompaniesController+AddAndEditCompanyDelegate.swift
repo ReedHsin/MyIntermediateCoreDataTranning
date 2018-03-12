@@ -14,7 +14,7 @@ import UIKit
 //所以在這邊試圖存取時，自然會找不到
 //但可以用創造一個Singleton CoreDataManager去解
 extension CompaniesController: AddAndEditCompanyDelegate{
-    func didEditCompany(company: CompanyModel) {
+    func didEditCompany(company: Company) {
         guard let row = companies.index(of: company) else {
             return
         }
@@ -22,7 +22,7 @@ extension CompaniesController: AddAndEditCompanyDelegate{
         tableView.reloadRows(at: [indexPath], with: .middle)
     }
     
-    func didAddCompany(company: CompanyModel) {
+    func didAddCompany(company: Company) {
         companies.append(company)
         //insert a new row in tableview
         let newIndexpath = IndexPath(row: companies.count-1, section: 0)

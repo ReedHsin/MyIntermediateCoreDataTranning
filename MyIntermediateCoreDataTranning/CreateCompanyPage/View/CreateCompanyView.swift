@@ -14,7 +14,7 @@ protocol CreateCompanyViewImageViewDelegate {
 
 
 protocol CreateCompanyViewProtocol {
-    var company: CompanyModel? {get set}
+    var company: Company? {get set}
     var profileImg: UIImage? {get set}
     var profileImageView: UIImageView {get set}
     var nameTextField: UITextField {get set}
@@ -32,7 +32,7 @@ protocol CreateCompanyViewProtocol {
 class CreateCompanyView: UIView, CreateCompanyViewProtocol {
     internal var delegate: CreateCompanyViewProtocol?
     public var imgViewDelegate: CreateCompanyViewImageViewDelegate?
-    public var company: CompanyModel? {
+    public var company: Company? {
         didSet{
             nameTextField.text = company?.name
             guard let founded = company?.founded else {return}

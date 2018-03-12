@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 protocol CompaniesControllerProtocol {
-    var companies: [CompanyModel] {get set}
+    var companies: [Company] {get set}
     var tableView: UITableView {get}
     func setupCompaniesNaviStyle()
     func setupTableView()
@@ -28,7 +28,7 @@ class CompaniesController: UIViewController{
        let tbv = UITableView()
         return tbv
     }()
-    var companies = [CompanyModel]()
+    var companies = [Company]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -79,7 +79,7 @@ extension CompaniesController: CompaniesControllerProtocol{
 //        }
         
         //這個方式可以批量刪除Data
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: CompanyModel.fetchRequest())
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: Company.fetchRequest())
         do{
             try context.execute(batchDeleteRequest)
             //但若想要有動畫的效果的話，就不能用這種方式

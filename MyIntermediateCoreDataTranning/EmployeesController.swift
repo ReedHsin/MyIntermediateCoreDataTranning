@@ -10,7 +10,7 @@ import UIKit
 class EmployeesViewController: UIViewController {
     var employees = [Employee]()
     
-    var company: CompanyModel?{
+    var company: Company?{
         didSet{
             guard let company = company else {return}
             setupNavigationBar(company: company)
@@ -41,7 +41,7 @@ class EmployeesViewController: UIViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellId")
     }
     
-    fileprivate func setupNavigationBar(company: CompanyModel){
+    fileprivate func setupNavigationBar(company: Company){
         navigationItem.title = company.name
         setupRightNavigationItemByImage(img: "plus", selector: #selector(handleAddItem))
     }
@@ -49,16 +49,15 @@ class EmployeesViewController: UIViewController {
     @objc fileprivate func handleAddItem(){
         let createEmployeeController = CreateEmployeeViewController()
         createEmployeeController.delegate = self
+        createEmployeeController.company = company
         let naviController = UINavigationController(rootViewController: createEmployeeController)
         present(naviController, animated: true, completion: nil)
         
     }
     
     fileprivate func fetchEmployees(){
-        CoreDataManager.shared.fetchEmployee { (employees) in
-            self.employees = employees
-            tableView.reloadData()
-        }
+        guard let employees = company?.employees?.allObjects as? [Employee] else {return}
+        self.employees = employees
     }
 }
 
@@ -75,7 +74,11 @@ extension EmployeesViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
         cell.backgroundColor = UIColor.tealColor
-        cell.textLabel?.text = employees[indexPath.row].name
+        let employee = employees[indexPath.row]
+        cell.textLabel?.text = employee.name
+        if let taxId = employee.employeeInformation?.taxId, let company = employee.company?.name{
+            cell.textLabel?.text = "\(employee.name ?? "")  -\(taxId)  -\(company)"
+        }
         cell.textLabel?.textColor = .white
         return cell
     }

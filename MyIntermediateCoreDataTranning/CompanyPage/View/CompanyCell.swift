@@ -15,7 +15,7 @@ enum CompanyCellConstants: CGFloat {
 
 
 class CompanyCell: UITableViewCell {
-    var company: CompanyModel?{
+    var company: Company?{
         didSet{
             if let profileImgData = company?.profileImgData{
                 let profileImg = UIImage(data: profileImgData)
@@ -25,7 +25,7 @@ class CompanyCell: UITableViewCell {
         }
     }
     
-    fileprivate func setupTitleLabel(company: CompanyModel?){
+    fileprivate func setupTitleLabel(company: Company?){
           guard let companyName = company?.name else {return}
         let attributedText = NSMutableAttributedString(string: companyName, attributes:[
             NSAttributedStringKey.font : UIFont.boldSystemFont(ofSize: 16),
@@ -41,7 +41,7 @@ class CompanyCell: UITableViewCell {
         titleLabel.attributedText = attributedText
     }
     
-    fileprivate func formateDate(company: CompanyModel?) -> String{
+    fileprivate func formateDate(company: Company?) -> String{
         guard let companyFoundedDate = company?.founded else {return ""}
         //但目前系統給的時間格式很不好讀，所以可以利用locale轉成人類好讀的格式
         //        let locale = Locale(identifier: "EN")
