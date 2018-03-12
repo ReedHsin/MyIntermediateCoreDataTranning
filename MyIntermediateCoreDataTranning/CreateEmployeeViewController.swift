@@ -43,6 +43,7 @@ class CreateEmployeeViewController: UIViewController{
     
     @objc private func handleSaveButton(){
         if checkIsFormValid(){
+            guard let employeeType = createEmployeeView.employeeSegmentedControll.titleForSegment(at: createEmployeeView.employeeSegmentedControll.selectedSegmentIndex) else {return}
             guard let name = createEmployeeView.nameTextField.text, let birthday = createEmployeeView.birthdayTextField.text , let company = company else {return}
             let dateFormatter = DateFormatter()
             guard let birthdayDate = dateFormatter.strToDate(date: birthday) else {
@@ -50,7 +51,7 @@ class CreateEmployeeViewController: UIViewController{
                 return
             }
             
-            let error = CoreDataManager.shared.saveEmployeeData(name: name, birthday: birthdayDate, company: company) { (employee) in
+            let error = CoreDataManager.shared.saveEmployeeData(name: name, birthday: birthdayDate, type: employeeType, company: company) { (employee) in
                 dismiss(animated: true, completion: {
                     self.delegate?.didAddEmployee(employee: employee)
                 })

@@ -81,6 +81,10 @@ class EmployeesViewController: UIViewController {
             return count < 5 && count > 2
         }
         
+        //依照employee的職位去區分
+        
+        
+        
         allEmployees = [
             executiveEmployees,
             seniorEmployees,

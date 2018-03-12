@@ -31,15 +31,25 @@ class CreateEmployeeView: UIView {
         return textField
     }()
     
+    let employeeSegmentedControll: UISegmentedControl = {
+       let types = ["Executive", "Senior", "Staff"]
+        let sc = UISegmentedControl(items: types)
+        sc.tintColor = UIColor.darkBlueColor
+        sc.selectedSegmentIndex = 0
+        return sc
+    }()
+    
     internal func setupViews(){
         addSubview(nameTextField)
         addSubview(birthdayTextField)
-        
+        addSubview(employeeSegmentedControll)
         
         nameTextField.anchor(top: topAnchor, bottom: nil, left: leftAnchor, right: rightAnchor, topPadding: 10, bottomPadding: 0, leftPadding: 10, rightPadding: 10, width: 0, height: 30)
         
         nameTextField.layoutIfNeeded()
         birthdayTextField.anchor(top: nameTextField.bottomAnchor, bottom: nil, left: nameTextField.leftAnchor, right: nameTextField.rightAnchor, topPadding: 10, bottomPadding: 0, leftPadding: 0, rightPadding: 0, width: 0, height: nameTextField.frame.height)
+        
+        employeeSegmentedControll.anchor(top: birthdayTextField.bottomAnchor, bottom: bottomAnchor, left: birthdayTextField.leftAnchor, right: birthdayTextField.rightAnchor, topPadding: 10, bottomPadding: 10, leftPadding: 0, rightPadding: 0, width: 0, height: 0)
     }
     
     public func fetchNameTextFieldText() -> String{
